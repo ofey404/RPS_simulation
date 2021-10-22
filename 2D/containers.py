@@ -18,6 +18,11 @@ class SerialNum2D(SerialNum):
     def __str__(self) -> str:
         return "SerialNum2D({}, {})".format(self.x(), self.y())
 
+    def __sub__(self, other):
+        x1, y1 = self.x(), self.y()
+        x2, y2 = other.x(), other.y()
+        return (x1-x2, y1-y2)
+
 
 def equilateral_triangle(sn: SerialNum2D) -> tuple[float]:
     x, y = sn.value()
@@ -69,8 +74,8 @@ class Triangle2D(Lattice):
         )
         return inside_lattice
 
-    def neighbours_count(self):
-        return len(self.__neighbour_offsets)
+    def neighbours_offsets(self):
+        return self.__neighbour_offsets
 
 
 class Triangle2DWeight(Weight):
@@ -87,3 +92,29 @@ class Triangle2DWeight(Weight):
     def set_value(self, sn: SerialNum2D, val: float):
         x, y = sn.value()
         self.__weight_matrix[x][y] = val
+
+
+class Triangle2DSideWeight(SideWeight):
+    __side_weight_matrix = None
+    __positive_offsets = None
+
+    def __init__(self, lattice: Triangle2D) -> None:
+        size = lattice.size()
+        offsets = lattice.neighbours_offsets()
+        side_per_node = int(len(offsets) / 2)
+        # FIXME: Waste half of our space.
+        self.__side_weight_matrix = np.zeros((size, size, side_per_node))
+
+        self.__positive_offsets = sorted(offsets, reverse=True)[0: side_per_node]
+
+    def value(self, lhs: SerialNum2D, rhs: SerialNum2D) -> float:
+        x, y, z = self.__neighbour_to_index(lhs, rhs)
+        return self.__side_weight_matrix[x][y][z]
+
+    def set_value(self, lhs: SerialNum2D, rhs: SerialNum2D, val:float):
+        x, y, z = self.__neighbour_to_index(lhs, rhs)
+        self.__side_weight_matrix[x][y][z] = val
+
+    def __neighbour_to_index(self, lhs: SerialNum2D, rhs: SerialNum2D):
+        lhs, rhs = sorted([lhs, rhs], key=lambda sn:sn.value(), reverse=True)
+        return (lhs.x(), lhs.y(), self.__positive_offsets.index(lhs - rhs))

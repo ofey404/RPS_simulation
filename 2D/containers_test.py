@@ -1,6 +1,7 @@
 import unittest
+import random
 from math import sqrt
-from containers import SerialNum2D, Triangle2D, equilateral_triangle, Triangle2DWeight
+from containers import SerialNum2D, Triangle2D, equilateral_triangle, Triangle2DWeight, Triangle2DSideWeight
 
 
 def almost_equal_points(testcase, lhs, rhs):
@@ -43,6 +44,11 @@ class TestSerialNum2D(unittest.TestCase):
         s = SerialNum2D(1, 2)
         self.assertEqual(s.x(), 1)
         self.assertEqual(s.y(), 2)
+
+    def test_sub(self):
+        s1 = SerialNum2D(0, 0)
+        s2 = SerialNum2D(1, 2)
+        self.assertEqual(s2 - s1, (1, 2))
 
 
 class TestTriangle2D(unittest.TestCase):
@@ -105,16 +111,35 @@ class TestTriangle2DWeight(unittest.TestCase):
     def setUp(self) -> None:
         self.size_3_lattice = Triangle2D(3)
         self.weight = Triangle2DWeight(self.size_3_lattice)
+        self.all_serial_num = self.size_3_lattice.all_serial_num()
 
     def test_default_value(self):
-        for sn in self.size_3_lattice.all_serial_num():
+        for sn in self.all_serial_num:
             self.assertEqual(0, self.weight.value(sn))
 
     def test_set_value(self):
-        for sn in self.size_3_lattice.all_serial_num():
-            self.weight.set_value(sn, 1.0)
-            self.assertEqual(1.0, self.weight.value(sn))
+        for sn in self.all_serial_num:
+            rnd = random.random()
+            self.weight.set_value(sn, rnd)
+            self.assertEqual(rnd, self.weight.value(sn))
 
+class TestTriangle2DSideWeight(unittest.TestCase):
+    def setUp(self) -> None:
+        self.size_4_lattice = Triangle2D(4)
+        self.side_weight = Triangle2DSideWeight(self.size_4_lattice)
+        self.all_serial_num = self.size_4_lattice.all_serial_num()
+
+    def test_default_value(self):
+        for sn in self.all_serial_num:
+            for neighbour in self.size_4_lattice.neighbours(sn):
+                self.assertEqual(0, self.side_weight.value(sn, neighbour))
+
+    def test_set_value(self):
+        for sn in self.all_serial_num:
+            for neighbour in self.size_4_lattice.neighbours(sn):
+                rnd = random.random()
+                self.side_weight.set_value(sn, neighbour, rnd)
+                self.assertEqual(rnd, self.side_weight.value(sn, neighbour))
 
 if __name__ == "__main__":
     unittest.main()
