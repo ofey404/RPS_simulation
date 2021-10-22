@@ -47,6 +47,9 @@ class Weight:
     def value(self, sn: SerialNum) -> float:
         pass
 
+    def set_value(self, sn: SerialNum, value: float):
+        pass
+
 
 class SideWeight:
     def value(lhs: SerialNum, rhs: SerialNum) -> float:

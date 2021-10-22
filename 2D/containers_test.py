@@ -1,11 +1,19 @@
 import unittest
 from math import sqrt
-from containers import SerialNum2D, Triangle2D, equilateral_triangle
+from containers import SerialNum2D, Triangle2D, equilateral_triangle, Triangle2DWeight
 
 
 def almost_equal_points(testcase, lhs, rhs):
     testcase.assertAlmostEqual(lhs[0], rhs[0], places=4)
     testcase.assertAlmostEqual(lhs[1], rhs[1], places=4)
+
+
+def serial_nums_to_tuples(sns: tuple[SerialNum2D]):
+    return (sn.value() for sn in sns)
+
+
+def assert_serial_nums_eq_tuples(testcase, sns: tuple[SerialNum2D], tups: tuple[int]):
+    testcase.assertCountEqual(serial_nums_to_tuples(sns), tups)
 
 
 class TestFunctions(unittest.TestCase):
@@ -58,7 +66,8 @@ class TestTriangle2D(unittest.TestCase):
         self.assertFalse(SerialNum2D(2, 1) in self.size_3)
 
     def test_all_serial_num(self):
-        self.assertCountEqual(
+        assert_serial_nums_eq_tuples(
+            self,
             self.size_3.all_serial_num(),
             ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (2, 0)),
         )
@@ -80,20 +89,31 @@ class TestTriangle2D(unittest.TestCase):
             self.size_3.to_coord(SerialNum2D(2, 2))
 
     def test_neighbours(self):
-        self.assertCountEqual(
-            (
-                neighbours.value()
-                for neighbours in self.size_3.neighbours(SerialNum2D(1, 1))
-            ),
+        assert_serial_nums_eq_tuples(
+            self,
+            self.size_3.neighbours(SerialNum2D(1, 1)),
             ((1, 0), (0, 1), (0, 2), (2, 0)),
         )
-        self.assertCountEqual(
-            (
-                neighbours.value()
-                for neighbours in self.size_3.neighbours(SerialNum2D(0, 0))
-            ),
+        assert_serial_nums_eq_tuples(
+            self,
+            self.size_3.neighbours(SerialNum2D(0, 0)),
             ((1, 0), (0, 1)),
         )
+
+
+class TestTriangle2DWeight(unittest.TestCase):
+    def setUp(self) -> None:
+        self.size_3_lattice = Triangle2D(3)
+        self.weight = Triangle2DWeight(self.size_3_lattice)
+
+    def test_default_value(self):
+        for sn in self.size_3_lattice.all_serial_num():
+            self.assertEqual(0, self.weight.value(sn))
+
+    def test_set_value(self):
+        for sn in self.size_3_lattice.all_serial_num():
+            self.weight.set_value(sn, 1.0)
+            self.assertEqual(1.0, self.weight.value(sn))
 
 
 if __name__ == "__main__":

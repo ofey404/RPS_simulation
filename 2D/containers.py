@@ -1,4 +1,5 @@
 from math import sqrt
+import numpy as np
 from abstract_containers import SerialNum, Lattice, SideWeight, Weight
 
 
@@ -42,7 +43,11 @@ class Triangle2D(Lattice):
         return self.__size
 
     def all_serial_num(self) -> tuple[SerialNum2D]:
-        return ((i, j) for i in range(self.__size) for j in range(self.__size - i))
+        return (
+            SerialNum2D(i, j)
+            for i in range(self.__size)
+            for j in range(self.__size - i)
+        )
 
     def to_coord(self, sn: SerialNum2D) -> tuple[float]:
         if sn not in self:
@@ -59,14 +64,26 @@ class Triangle2D(Lattice):
             for dx, dy in self.__neighbour_offsets
             if (x + dx >= 0 and y + dy >= 0)
         )
-        inside = (
+        inside_lattice = (
             SerialNum2D(x, y) for x, y in non_negative if SerialNum2D(x, y) in self
         )
-        return inside
+        return inside_lattice
+
+    def neighbours_count(self):
+        return len(self.__neighbour_offsets)
 
 
 class Triangle2DWeight(Weight):
-    __lattice = None
+    __weight_matrix = None
 
     def __init__(self, lattice: Triangle2D) -> None:
-        self.__lattice = lattice
+        size = lattice.size()
+        self.__weight_matrix = np.zeros((size, size))
+
+    def value(self, sn: SerialNum2D):
+        x, y = sn.value()
+        return self.__weight_matrix[x][y]
+
+    def set_value(self, sn: SerialNum2D, val: float):
+        x, y = sn.value()
+        self.__weight_matrix[x][y] = val
