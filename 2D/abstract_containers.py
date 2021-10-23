@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def all_positive(*val):
     for i, v in enumerate(val):
         if v < 0:
@@ -8,21 +11,20 @@ def all_positive(*val):
             )
 
 
-class SerialNum:
-    __val = None
+class Weight:
+    def value(self, sn: SerialNum) -> float:
+        pass
 
-    def __init__(self, *val) -> None:
-        all_positive(*val)
-        self.__val = val
+    def set_value(self, sn: SerialNum, value: float):
+        pass
 
-    def value(self) -> tuple[int]:
-        return self.__val
 
-    def __len__(self):
-        return len(self.__val)
+class SideWeight:
+    def value(self, lhs: SerialNum, rhs: SerialNum) -> float:
+        pass
 
-    def __eq__(self, other):
-        return self.__val == other.value()
+    def set_value(self, lhs: SerialNum, rhs: SerialNum, value: float):
+        pass
 
 
 class Lattice:
@@ -43,17 +45,18 @@ class Lattice:
         pass
 
 
-class Weight:
-    def value(self, sn: SerialNum) -> float:
-        pass
+class SerialNum:
+    __val = None
 
-    def set_value(self, sn: SerialNum, value: float):
-        pass
+    def __init__(self, *val) -> None:
+        all_positive(*val)
+        self.__val = val
 
+    def value(self) -> tuple[int]:
+        return self.__val
 
-class SideWeight:
-    def value(self, lhs: SerialNum, rhs: SerialNum) -> float:
-        pass
+    def __len__(self):
+        return len(self.__val)
 
-    def set_value(self, lhs: SerialNum, rhs: SerialNum, value: float):
-        pass
+    def __eq__(self, other: SerialNum):
+        return self.__val == other.value()

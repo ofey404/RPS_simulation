@@ -2,9 +2,9 @@ import unittest
 import random
 from math import sqrt
 from containers import (
+    equilateral_triangle,
     SerialNum2D,
     Triangle2D,
-    equilateral_triangle,
     Triangle2DWeight,
     Triangle2DSideWeight,
 )
@@ -23,36 +23,40 @@ def assert_serial_nums_eq_tuples(testcase, sns: tuple[SerialNum2D], tups: tuple[
     testcase.assertCountEqual(serial_nums_to_tuples(sns), tups)
 
 
-class TestFunctions(unittest.TestCase):
-    def test_equilateral_triangle(self):
-        almost_equal_points(self, (0, 0), equilateral_triangle(SerialNum2D(0, 0)))
-        almost_equal_points(self, (1, 0), equilateral_triangle(SerialNum2D(1, 0)))
-        almost_equal_points(
-            self, (1.5, sqrt(3) / 2), equilateral_triangle(SerialNum2D(1, 1))
-        )
+class TestTriangle2DWeight(unittest.TestCase):
+    def setUp(self) -> None:
+        self.size_3_lattice = Triangle2D(3)
+        self.weight = Triangle2DWeight(self.size_3_lattice)
+        self.all_serial_num = self.size_3_lattice.all_serial_num()
+
+    def test_default_value(self):
+        for sn in self.all_serial_num:
+            self.assertEqual(0, self.weight.value(sn))
+
+    def test_set_value(self):
+        for sn in self.all_serial_num:
+            rnd = random.random()
+            self.weight.set_value(sn, rnd)
+            self.assertEqual(rnd, self.weight.value(sn))
 
 
-class TestSerialNum2D(unittest.TestCase):
-    def test_init_not_negative(self):
-        with self.assertRaises(Exception):
-            SerialNum2D(-1, 2)
+class TestTriangle2DSideWeight(unittest.TestCase):
+    def setUp(self) -> None:
+        self.size_4_lattice = Triangle2D(4)
+        self.side_weight = Triangle2DSideWeight(self.size_4_lattice)
+        self.all_serial_num = self.size_4_lattice.all_serial_num()
 
-    def test_init_length_2(self):
-        with self.assertRaises(Exception):
-            SerialNum2D(1, 2, 3)
+    def test_default_value(self):
+        for sn in self.all_serial_num:
+            for neighbour in self.size_4_lattice.neighbours(sn):
+                self.assertEqual(0, self.side_weight.value(sn, neighbour))
 
-        with self.assertRaises(Exception):
-            SerialNum2D(1)
-
-    def test_xy(self):
-        s = SerialNum2D(1, 2)
-        self.assertEqual(s.x(), 1)
-        self.assertEqual(s.y(), 2)
-
-    def test_sub(self):
-        s1 = SerialNum2D(0, 0)
-        s2 = SerialNum2D(1, 2)
-        self.assertEqual(s2 - s1, (1, 2))
+    def test_set_value(self):
+        for sn in self.all_serial_num:
+            for neighbour in self.size_4_lattice.neighbours(sn):
+                rnd = random.random()
+                self.side_weight.set_value(sn, neighbour, rnd)
+                self.assertEqual(rnd, self.side_weight.value(sn, neighbour))
 
 
 class TestTriangle2D(unittest.TestCase):
@@ -103,40 +107,36 @@ class TestTriangle2D(unittest.TestCase):
         )
 
 
-class TestTriangle2DWeight(unittest.TestCase):
-    def setUp(self) -> None:
-        self.size_3_lattice = Triangle2D(3)
-        self.weight = Triangle2DWeight(self.size_3_lattice)
-        self.all_serial_num = self.size_3_lattice.all_serial_num()
+class TestSerialNum2D(unittest.TestCase):
+    def test_init_not_negative(self):
+        with self.assertRaises(Exception):
+            SerialNum2D(-1, 2)
 
-    def test_default_value(self):
-        for sn in self.all_serial_num:
-            self.assertEqual(0, self.weight.value(sn))
+    def test_init_length_2(self):
+        with self.assertRaises(Exception):
+            SerialNum2D(1, 2, 3)
 
-    def test_set_value(self):
-        for sn in self.all_serial_num:
-            rnd = random.random()
-            self.weight.set_value(sn, rnd)
-            self.assertEqual(rnd, self.weight.value(sn))
+        with self.assertRaises(Exception):
+            SerialNum2D(1)
+
+    def test_xy(self):
+        s = SerialNum2D(1, 2)
+        self.assertEqual(s.x(), 1)
+        self.assertEqual(s.y(), 2)
+
+    def test_sub(self):
+        s1 = SerialNum2D(0, 0)
+        s2 = SerialNum2D(1, 2)
+        self.assertEqual(s2 - s1, (1, 2))
 
 
-class TestTriangle2DSideWeight(unittest.TestCase):
-    def setUp(self) -> None:
-        self.size_4_lattice = Triangle2D(4)
-        self.side_weight = Triangle2DSideWeight(self.size_4_lattice)
-        self.all_serial_num = self.size_4_lattice.all_serial_num()
-
-    def test_default_value(self):
-        for sn in self.all_serial_num:
-            for neighbour in self.size_4_lattice.neighbours(sn):
-                self.assertEqual(0, self.side_weight.value(sn, neighbour))
-
-    def test_set_value(self):
-        for sn in self.all_serial_num:
-            for neighbour in self.size_4_lattice.neighbours(sn):
-                rnd = random.random()
-                self.side_weight.set_value(sn, neighbour, rnd)
-                self.assertEqual(rnd, self.side_weight.value(sn, neighbour))
+class TestHelperFunctions(unittest.TestCase):
+    def test_equilateral_triangle(self):
+        almost_equal_points(self, (0, 0), equilateral_triangle(SerialNum2D(0, 0)))
+        almost_equal_points(self, (1, 0), equilateral_triangle(SerialNum2D(1, 0)))
+        almost_equal_points(
+            self, (1.5, sqrt(3) / 2), equilateral_triangle(SerialNum2D(1, 1))
+        )
 
 
 if __name__ == "__main__":
