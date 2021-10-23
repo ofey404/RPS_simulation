@@ -24,8 +24,6 @@ def assert_serial_nums_eq_tuples(testcase, sns: tuple[SerialNum2D], tups: tuple[
 
 
 class TestFunctions(unittest.TestCase):
-    # FIXME: Duplicate code
-
     def test_equilateral_triangle(self):
         almost_equal_points(self, (0, 0), equilateral_triangle(SerialNum2D(0, 0)))
         almost_equal_points(self, (1, 0), equilateral_triangle(SerialNum2D(1, 0)))
@@ -77,7 +75,6 @@ class TestTriangle2D(unittest.TestCase):
             ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (2, 0)),
         )
 
-    # FIXME: Duplicate code
     def almost_equal_points(self, lhs, rhs):
         self.assertAlmostEqual(lhs[0], rhs[0], places=4)
         self.assertAlmostEqual(lhs[1], rhs[1], places=4)

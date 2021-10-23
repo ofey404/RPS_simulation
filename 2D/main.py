@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+from containers import SerialNum2D, Triangle2D, Triangle2DWeight, Triangle2DSideWeight
 
 
 class RPS2DTriangleSystem:
@@ -9,7 +10,7 @@ class RPS2DTriangleSystem:
     def step(dt):
         pass
 
-    def dxdt(c: SerialNum):
+    def dxdt(c: SerialNum2D):
         pass
 
     def visualization():
