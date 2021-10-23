@@ -1,7 +1,13 @@
 import unittest
 import random
 from math import sqrt
-from containers import SerialNum2D, Triangle2D, equilateral_triangle, Triangle2DWeight, Triangle2DSideWeight
+from containers import (
+    SerialNum2D,
+    Triangle2D,
+    equilateral_triangle,
+    Triangle2DWeight,
+    Triangle2DSideWeight,
+)
 
 
 def almost_equal_points(testcase, lhs, rhs):
@@ -52,13 +58,6 @@ class TestSerialNum2D(unittest.TestCase):
 
 
 class TestTriangle2D(unittest.TestCase):
-    def test_init_length_1(self):
-        with self.assertRaises(Exception):
-            Triangle2D()
-
-        with self.assertRaises(Exception):
-            Triangle2D(1, 2)
-
     def setUp(self) -> None:
         self.size_3 = Triangle2D(3)
 
@@ -123,6 +122,7 @@ class TestTriangle2DWeight(unittest.TestCase):
             self.weight.set_value(sn, rnd)
             self.assertEqual(rnd, self.weight.value(sn))
 
+
 class TestTriangle2DSideWeight(unittest.TestCase):
     def setUp(self) -> None:
         self.size_4_lattice = Triangle2D(4)
@@ -140,6 +140,7 @@ class TestTriangle2DSideWeight(unittest.TestCase):
                 rnd = random.random()
                 self.side_weight.set_value(sn, neighbour, rnd)
                 self.assertEqual(rnd, self.side_weight.value(sn, neighbour))
+
 
 if __name__ == "__main__":
     unittest.main()
