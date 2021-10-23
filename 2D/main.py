@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-from containers import SerialNum2D, Triangle2D, Triangle2DWeight, Triangle2DSideWeight
+from containers import SerialNum2D, Triangle2D, Triangle2DWeight, Triangle2DEdgeWeight
 
 
 class RPS2DTriangleSystem:

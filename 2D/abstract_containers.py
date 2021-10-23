@@ -19,11 +19,11 @@ class Weight:
         pass
 
 
-class SideWeight:
-    def value(self, lhs: SerialNum, rhs: SerialNum) -> float:
+class EdgeWeight:
+    def value(self, edge: Edge) -> float:
         pass
 
-    def set_value(self, lhs: SerialNum, rhs: SerialNum, value: float):
+    def set_value(self, edge: Edge, value: float):
         pass
 
 
@@ -60,3 +60,21 @@ class SerialNum:
 
     def __eq__(self, other: SerialNum):
         return self.__val == other.value()
+
+
+class Edge:
+    __start = None
+    __end = None
+
+    def __init__(self, start: SerialNum, end: SerialNum) -> None:
+        self.__start = start
+        self.__end = end
+
+    def start(self):
+        return self.__start
+
+    def end(self):
+        return self.__end
+
+    def __eq__(self, other: Edge):
+        return self.start() == other.start() and self.__end == other.end()

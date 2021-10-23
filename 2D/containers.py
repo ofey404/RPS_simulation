@@ -1,7 +1,14 @@
 from __future__ import annotations
 from math import sqrt
 import numpy as np
-from abstract_containers import SerialNum, Lattice, SideWeight, Weight
+from abstract_containers import Edge, SerialNum, Lattice, EdgeWeight, Weight
+
+TRIANGLE_2D_NEIGHBOUR_OFFSETS = ((1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, 1))
+
+# Map neighbour offset to index
+POSITIVE_OFFSETS = sorted(TRIANGLE_2D_NEIGHBOUR_OFFSETS, reverse=True)[
+    0 : int(len(TRIANGLE_2D_NEIGHBOUR_OFFSETS))
+]
 
 
 def equilateral_triangle(sn: SerialNum2D) -> tuple[float]:
@@ -25,35 +32,29 @@ class Triangle2DWeight(Weight):
         self.__weight_matrix[x][y] = val
 
 
-class Triangle2DSideWeight(SideWeight):
+class Triangle2DEdgeWeight(EdgeWeight):
     __side_weight_matrix = None
-    __positive_offsets = None
 
     def __init__(self, lattice: Triangle2D) -> None:
         size = lattice.size()
-        offsets = lattice.neighbours_offsets()
-        sides_per_node = int(len(offsets) / 2)
-        self.__side_weight_matrix = np.zeros((size, size, sides_per_node))
+        self.__side_weight_matrix = np.zeros((size, size, len(POSITIVE_OFFSETS)))
 
-        self.__positive_offsets = sorted(offsets, reverse=True)[0:sides_per_node]
-
-    def value(self, lhs: SerialNum2D, rhs: SerialNum2D) -> float:
-        x, y, z = self.__neighbour_to_index(lhs, rhs)
+    def value(self, edge: UndirectedEdge2D) -> float:
+        x, y, z = self.__neighbour_to_index(edge)
         return self.__side_weight_matrix[x][y][z]
 
-    def set_value(self, lhs: SerialNum2D, rhs: SerialNum2D, val: float):
-        x, y, z = self.__neighbour_to_index(lhs, rhs)
+    def set_value(self, edge: UndirectedEdge2D, val: float):
+        x, y, z = self.__neighbour_to_index(edge)
         self.__side_weight_matrix[x][y][z] = val
 
-    def __neighbour_to_index(self, lhs: SerialNum2D, rhs: SerialNum2D):
-        lhs, rhs = sorted([lhs, rhs], key=lambda sn: sn.value(), reverse=True)
-        return (lhs.x(), lhs.y(), self.__positive_offsets.index(lhs - rhs))
+    def __neighbour_to_index(self, edge: UndirectedEdge2D):
+        lhs, rhs = sorted([edge.start(), edge.end()], reverse=True)
+        return (lhs.x(), lhs.y(), POSITIVE_OFFSETS.index(lhs - rhs))
 
 
 class Triangle2D(Lattice):
     __size = None
     __serial_num_to_coordination = None
-    __neighbour_offsets = ((1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, 1))
 
     def __init__(self, shape=3, to_coord=equilateral_triangle) -> None:
         super().__init__(shape)
@@ -76,6 +77,14 @@ class Triangle2D(Lattice):
             for j in range(self.__size - i)
         )
 
+    def all_edges(self) -> tuple[UndirectedEdge2D]:
+        all_include_duplicated = (
+            UndirectedEdge2D(sn, neighbour)
+            for sn in self.all_serial_num()
+            for neighbour in self.neighbours(sn)
+        )
+        return tuple(set(all_include_duplicated))
+
     def to_coord(self, sn: SerialNum2D) -> tuple[float]:
         if sn not in self:
             raise Exception("SerialNum {} is not in lattice {}".format(sn, self))
@@ -85,7 +94,7 @@ class Triangle2D(Lattice):
         x, y = sn.value()
         non_negative = (
             (x + dx, y + dy)
-            for dx, dy in self.__neighbour_offsets
+            for dx, dy in TRIANGLE_2D_NEIGHBOUR_OFFSETS
             if (x + dx >= 0 and y + dy >= 0)
         )
         inside_lattice = (
@@ -93,8 +102,15 @@ class Triangle2D(Lattice):
         )
         return inside_lattice
 
-    def neighbours_offsets(self):
-        return self.__neighbour_offsets
+
+class UndirectedEdge2D(Edge):
+    def __eq__(self, other: UndirectedEdge2D):
+        return (self.start() == other.start() and self.end() == other.end()) or (
+            self.start() == other.end() and self.end() == other.start()
+        )
+
+    def __hash__(self):
+        return hash(tuple(sorted((self.start(), self.end()))))
 
 
 class SerialNum2D(SerialNum):
@@ -114,3 +130,12 @@ class SerialNum2D(SerialNum):
         x1, y1 = self.x(), self.y()
         x2, y2 = other.x(), other.y()
         return (x1 - x2, y1 - y2)
+
+    def __hash__(self) -> int:
+        return self.value().__hash__()
+
+    def __eq__(self, other: SerialNum2D):
+        return self.value() == other.value()
+
+    def __lt__(self, other: SerialNum2D):
+        return self.value() < other.value()
