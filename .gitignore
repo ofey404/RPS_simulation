@@ -1,4 +1,5 @@
 *.pdf
+!doc/intro.pdf
 sketch/*.png
 *.gif
 
