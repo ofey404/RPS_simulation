@@ -5,7 +5,7 @@ from abstract_containers import Edge, SerialNum, Lattice, EdgeWeight, Weight
 
 TRIANGLE_2D_NEIGHBOUR_OFFSETS = ((1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, 1))
 
-# Map neighbour offset to index
+# REFACTOR: More elegant way to map neighbour offset to index.
 POSITIVE_OFFSETS = sorted(TRIANGLE_2D_NEIGHBOUR_OFFSETS, reverse=True)[
     0 : int(len(TRIANGLE_2D_NEIGHBOUR_OFFSETS))
 ]
@@ -92,15 +92,15 @@ class Triangle2D(Lattice):
 
     def neighbours(self, sn: SerialNum2D) -> tuple[SerialNum]:
         x, y = sn.value()
-        non_negative = (
+        non_negative_neighbours = (
             (x + dx, y + dy)
             for dx, dy in TRIANGLE_2D_NEIGHBOUR_OFFSETS
             if (x + dx >= 0 and y + dy >= 0)
         )
-        inside_lattice = (
-            SerialNum2D(x, y) for x, y in non_negative if SerialNum2D(x, y) in self
+        filter_inside_lattice = (
+            SerialNum2D(x, y) for x, y in non_negative_neighbours if SerialNum2D(x, y) in self
         )
-        return inside_lattice
+        return filter_inside_lattice
 
 
 class UndirectedEdge2D(Edge):
