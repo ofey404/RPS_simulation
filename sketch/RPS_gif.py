@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import imageio
+import time
+import pickle
 
 
 def RK4(f, Y0, tspan, nt):
@@ -36,6 +38,7 @@ def RoPpSc(Y, t):
     return f
 
 
+
 def create_gif(image_list, gif_name, duration):
     frames = []
     for image_name in image_list:
@@ -43,6 +46,14 @@ def create_gif(image_list, gif_name, duration):
     imageio.mimsave(gif_name, frames, "GIF", duration=duration)
     return
 
+def dump_result(matrix, prefix):
+    filename = "{}-{}.pkl".format(prefix, time.strftime("%Y-%m-%d-%H:%M:%S".format(prefix), time.localtime()))
+    data = {
+        "shape": matrix.shape,
+        "result": matrix
+    }
+    with open(filename, "wb") as f:
+        pickle.dump(data, f)
 
 if __name__ == "__main__":
     Y0 = np.array([0.01] * 33)
@@ -50,10 +61,13 @@ if __name__ == "__main__":
     r = np.array([1, 2, 1])
     result = RK4(RoPpSc, Y0, tspan, nt)
 
+    dump_result(result, "RPS")
+
     image_list = []
     for i in range(nt)[::10000]:
         fig, ax = plt.subplots()
-        ax.plot(np.arange(33), result[:, i])
+        x, y = np.arange(33), result[:, i]
+        ax.plot(x, y)
         # ax.set_ylim(0.005, 0.15)
         plt.yscale("log")
         pathname = r"C:\Users\iris\Desktop\ten\石头剪刀布\t={}.png".format(i)
