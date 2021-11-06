@@ -7,7 +7,7 @@ import sys
 def main(argv):
     config, data_dir = parse_argv(argv)
     
-    Y0 = np.array([config["Y0"]] * 13)
+    Y0 = np.array([config["Y0"]] * config["n"])
     tspan, nt = config["tspan"], config["nt"]
     r = np.array(config["r"])
     
