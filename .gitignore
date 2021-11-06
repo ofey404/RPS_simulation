@@ -1,6 +1,6 @@
 *.pdf
 !doc/intro.pdf
-sketch/*.png
+sketch/**/*.png
 *.gif
 *_gif/
 *.pkl
