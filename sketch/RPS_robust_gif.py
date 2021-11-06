@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import imageio
+from RPS_gif import dump_result
 
 
 def RK4(f, Y0, tspan, nt):
@@ -55,6 +56,8 @@ if __name__ == "__main__":
     tspan, nt = [0, 300], 5000
     r = np.array([1, 0.5, 1])
     result = RK4(RoPpSc_robust, Y0, tspan, nt)
+
+    dump_result(result, "RPS-robost")
 
     image_list = []
     for i in range(nt)[::500]:

@@ -38,7 +38,6 @@ def RoPpSc(Y, t):
     return f
 
 
-
 def create_gif(image_list, gif_name, duration):
     frames = []
     for image_name in image_list:
@@ -46,14 +45,15 @@ def create_gif(image_list, gif_name, duration):
     imageio.mimsave(gif_name, frames, "GIF", duration=duration)
     return
 
+
 def dump_result(matrix, prefix):
-    filename = "{}-{}.pkl".format(prefix, time.strftime("%Y-%m-%d-%H:%M:%S".format(prefix), time.localtime()))
-    data = {
-        "shape": matrix.shape,
-        "result": matrix
-    }
+    filename = "{}-{}.pkl".format(
+        prefix, time.strftime("%Y-%m-%d-%H:%M:%S".format(prefix), time.localtime())
+    )
+    data = {"shape": matrix.shape, "result": matrix}
     with open(filename, "wb") as f:
         pickle.dump(data, f)
+
 
 if __name__ == "__main__":
     Y0 = np.array([0.01] * 33)
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     for i in range(nt)[::10000]:
         fig, ax = plt.subplots()
         x, y = np.arange(33), result[:, i]
-        ax.plot(x, y)
+        ax.bar(x, y)
         # ax.set_ylim(0.005, 0.15)
         plt.yscale("log")
         pathname = r"C:\Users\iris\Desktop\ten\石头剪刀布\t={}.png".format(i)
