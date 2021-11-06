@@ -1,7 +1,7 @@
 简单的 RPS 模拟工作流程
 ===================
 
-运行 `./new.sh` 就可以迅速交互式进行实验。
+运行 [`./new.sh`](./new.sh) 就可以迅速交互式进行实验。
 
 ```bash
 # NOTICE: Change to what you like!
