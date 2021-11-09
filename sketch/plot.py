@@ -30,47 +30,6 @@ class Visualizer:
         self.color_scale = [np.random.rand(3) for _ in range(data["shape"][0])]
         self.border = sum(data["result"][:, 0]) / 4
 
-    def plt_visualize_1D(self, ts, filepath):
-        fig, ax = plt.subplots(subplot_kw={"aspect": "equal"})
-        xs, ys = get_xy(self.data, ts)
-        n = xs.shape[0]
-        previous_xy = None
-        for i in range(n):
-            xy = (xs[i], 0 if i % 2 == 0 else 1)
-            diameter = ys[i]
-            ax.add_artist(Circle(xy=xy, diameter=diameter, color=self.color_scale[i]))
-            # ax.add_artist(Circle(xy=xy, diameter=diameter))
-            if previous_xy:
-                ax.arrow(
-                    previous_xy[0],
-                    previous_xy[1],
-                    xy[0] - previous_xy[0],
-                    xy[1] - previous_xy[1],
-                )
-            previous_xy = xy
-
-        ax.set_xlim(-self.border, n + self.border)
-        ax.set_ylim(-self.border, self.border)
-
-        # plt.show()
-        plt.savefig(filepath)
-        plt.close()
-
-    def plt_log_x(self, ts, filepath):
-        x, y = get_xy(self.data, ts)
-        y = np.log(y)
-
-        k, b = np.polyfit(x, y, 1)
-
-        plt.bar(x, y)
-        plt.xlabel("site alpha")
-        plt.ylabel("log(x_alpha)")
-
-        plt.plot(x, k * x + b, "k-")
-
-        plt.savefig(filepath)
-        plt.close()
-
     def plt_temporal_mass_average(self, filepath):
         result = self.data["result"]
 
@@ -79,7 +38,7 @@ class Visualizer:
         var = np.var(result, axis=1)
 
         log_avg = np.log(avg)
-        k, b  = np.polyfit(x, log_avg, 1)
+        k, b = np.polyfit(x, log_avg, 1)
 
         plt.scatter(x, log_avg)
         plt.plot(x, k * x + b, "k-")
@@ -129,11 +88,9 @@ def main(argv):
         n, t = data["shape"]
         v = Visualizer(data, config)
         v.plt_temporal_mass_average(data_dir / "temporal_mass_average.png")
-        v.plt_temporal_mass_average_visualization(data_dir / "temporal_mass_average_visualization.png")
-        exit(0)
-        for i in range(0, t, step):
-            v.plt_log_x(i, data_dir / "log_plt_{}.png".format(i))
-            v.plt_visualize_1D(i, data_dir / "visualization_{}.png".format(i))
+        v.plt_temporal_mass_average_visualization(
+            data_dir / "temporal_mass_average_visualization.png"
+        )
 
 
 if __name__ == "__main__":
