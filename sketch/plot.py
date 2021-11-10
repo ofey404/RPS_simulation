@@ -27,15 +27,18 @@ class Visualizer:
         self.data = data
         self.config = config
 
+        self.T = 2000
+
         self.color_scale = [np.random.rand(3) for _ in range(data["shape"][0])]
         self.border = sum(data["result"][:, 0]) / 4
 
     def plt_temporal_mass_average(self, filepath):
         result = self.data["result"]
+        # Window
+        result = result[:, -self.T:]
 
         x = np.arange(self.data["shape"][0])
         avg = np.average(result, axis=1)
-        var = np.var(result, axis=1)
 
         log_avg = np.log(avg)
         k, b = np.polyfit(x, log_avg, 1)
@@ -49,6 +52,7 @@ class Visualizer:
     def plt_temporal_mass_average_visualization(self, filepath):
         fig, ax = plt.subplots(subplot_kw={"aspect": "equal"})
         result = self.data["result"]
+
         x = np.arange(self.data["shape"][0])
         avg = np.average(result, axis=1)
 
@@ -75,6 +79,20 @@ class Visualizer:
         plt.savefig(filepath)
         plt.close()
 
+    def plt_temporal_mass_variance(self, filepath):
+        result = self.data["result"]
+
+        x = np.arange(self.data["shape"][0])
+        var = np.var(result, axis=1)
+
+        k, b = np.polyfit(x, var, 1)
+
+        plt.scatter(x, var)
+        plt.plot(x, k * x + b, "k-")
+        # plt.show()
+        plt.savefig(filepath)
+        plt.close()
+
 
 def main(argv):
     config, data_dir = parse_argv(argv)
@@ -88,6 +106,7 @@ def main(argv):
         n, t = data["shape"]
         v = Visualizer(data, config)
         v.plt_temporal_mass_average(data_dir / "temporal_mass_average.png")
+        v.plt_temporal_mass_variance(data_dir / "temporal_mass_variance.png")
         v.plt_temporal_mass_average_visualization(
             data_dir / "temporal_mass_average_visualization.png"
         )
