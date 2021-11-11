@@ -30,7 +30,7 @@ def plot_matrix(matrix_generator, r_lim):
             xs.append(i)
             ys.append(e.real)
 
-    plt.scatter(xs, ys)
+    plt.scatter(xs, ys, marker="+", color="green")
     plt.xlabel("r")
     plt.ylabel("real")
     plt.savefig("./summary.png".format(r))
