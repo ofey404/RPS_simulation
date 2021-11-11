@@ -19,7 +19,7 @@ def plot_2d_triangle_grid(size, filepath):
     fig, ax = plt.subplots(subplot_kw={"aspect": "equal"})
     plot_edge_set(ax, edges_type_1, color="red")
     plot_edge_set(ax, edges_type_2, color="blue")
-    plot_edge_set(ax, edges_type_3, color="black")
+    plot_edge_set(ax, edges_type_3, color="green")
     plt.savefig(filepath)
     plt.close()
 
