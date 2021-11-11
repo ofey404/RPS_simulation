@@ -32,9 +32,9 @@ u = [1, 0]
 v = [1 / 2, sqrt(3) / 2]
 
 
-def generate_triangular_edges_from_origin(origins):
-    u = [1, 0]
-    v = [1 / 2, sqrt(3) / 2]
+def generate_triangular_edges_from_origin(size):
+    subscripts = [[i, j] for i in range(size) for j in range(size) if i + j < size]
+    origins = [v_add(v_mul(i, u), v_mul(j, v)) for i, j in subscripts]
 
     edge_1 = [1 / 2, sqrt(3) / 2]
     edges_type_1 = [(v_add(o, edge_1), o) for o in origins]

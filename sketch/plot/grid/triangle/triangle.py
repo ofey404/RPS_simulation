@@ -13,13 +13,8 @@ import util
 
 
 def plot_2d_triangle_grid(size, filepath):
-    u = util.u
-    v = util.v
-    subscripts = [[i, j] for i in range(size) for j in range(size) if i + j < size]
-    origins = [v_add(v_mul(i, u), v_mul(j, v)) for i, j in subscripts]
-
     edges_type_1, edges_type_2, edges_type_3 = generate_triangular_edges_from_origin(
-        origins
+        size
     )
     fig, ax = plt.subplots(subplot_kw={"aspect": "equal"})
     plot_edge_set(ax, edges_type_1, color="red")
