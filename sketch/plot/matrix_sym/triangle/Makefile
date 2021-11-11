@@ -1,0 +1,2 @@
+plot:
+	python matrix.py
