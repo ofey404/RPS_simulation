@@ -1,8 +1,3 @@
-from os import confstr
-import sys
-import numpy as np
-from numpy import core, square, tri
-from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
 from math import sqrt
 
