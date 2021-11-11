@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 import imageio
 
 
@@ -52,6 +53,9 @@ if __name__ == "__main__":
     tspan, nt = [0, 1500], 15001
     r = np.array([1, 1, 1])
     result = RK4(RoPpSc, Y0, tspan, nt)
+
+    with open("./RPS_wavepackage_gif.pkl", "wb") as f:
+        pickle.dump({"result": result}, f)
 
     image_list = []
     for i in range(nt)[500::1000]:

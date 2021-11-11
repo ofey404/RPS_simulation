@@ -91,7 +91,7 @@ def plot_2d_hexagon_grid(size, filepath):
 
 def main():
     for i in range(3, 3 * 7, 3):
-        plot_2d_hexagon_grid(i, "./2d_triangle_grid_{}.png".format(i))
+        plot_2d_hexagon_grid(i, "./2d_hexagon_grid_{}.png".format(i//3))
 
 
 if __name__ == "__main__":
