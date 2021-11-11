@@ -1,6 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import os, sys, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir) 
+
+from util import plot_matrix
+
 def matrix_generator(n, R):
     coordinates = {}
     head = 0
@@ -27,42 +34,7 @@ def matrix_generator(n, R):
 
     return A
 
-    
-
 if __name__ == '__main__':
-    r_lim = 3
-    all_eigens = []
-    for r in np.arange(0, r_lim, 0.1):
-        R = (1, 1, r)
-        mat = matrix_generator(7, R)
-        # 求本征值
-        eigens = np.linalg.eigvals((0+1j)*mat)
-        reals, imags = [], []
-        for eigen in eigens:
-            reals.append(eigen.real)
-            imags.append(eigen.imag)
-
-        plt.scatter(reals, imags)
-        plt.xlabel("real")
-        plt.ylabel("imag")
-        # plt.show()
-        plt.savefig("./{:.2}.png".format(r))
-        plt.close()
-
-        all_eigens.append(eigens)
-
-    xs = []
-    ys = []
-    for i, eigens in zip(np.arange(0, r_lim, 0.1), all_eigens):
-        for e in eigens:
-            xs.append(i)
-            ys.append(e.real)
-
-    plt.scatter(xs, ys)
-    plt.xlabel("r")
-    plt.ylabel("real")
-    plt.savefig("./summary.png".format(r))
-    # plt.show()
-    plt.close()
+    plot_matrix(matrix_generator, r_lim=3)
 
         
