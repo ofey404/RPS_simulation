@@ -32,6 +32,9 @@ def plot_bandgap(r, filepath):
 
     plt.plot(x, y1)
     plt.plot(x, y2)
+    plt.xlabel("k")
+    plt.ylabel("λ")
+    plt.xticks([-pi, -pi/2, 0, pi/2, pi], ["$-\pi$", "$-\pi/2$", "$0$", "$\pi/2$", "$\pi$"])
 
     # plt.show()
     plt.savefig(filepath)
@@ -48,13 +51,18 @@ def plot_ellipse(r, filepath):
     fig, ax = plt.subplots()
     e = Ellipse(xy=xy, width=width, height=height, angle=0, linewidth=2, fill=False)
     ax.add_artist(e)
+    ax.arrow(0, 0, xy[0]+width/2, xy[1], head_width=0.05, head_length=0.1, length_includes_head=True, fc='k', ec='k')
 
     ax.set_xlim(-width, width)
     ax.set_ylim(-r3 - height, 1)
+    ax.set_xlabel("h1")
+    ax.set_ylabel("h2")
+    ax.xaxis.set_label_coords(0.9, 0.5)
+    ax.yaxis.set_label_coords(0.5, 0.9)
 
-    ax.spines["left"].set_position("center")
+    ax.spines["left"].set_position(("data", 0))
+    ax.spines["bottom"].set_position(("data", 0))
     ax.spines["right"].set_color("none")
-    ax.spines["bottom"].set_position("center")
     ax.spines["top"].set_color("none")
     ax.spines["left"].set_smart_bounds(True)
     ax.spines["bottom"].set_smart_bounds(True)

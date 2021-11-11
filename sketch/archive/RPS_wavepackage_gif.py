@@ -43,6 +43,8 @@ def create_gif(image_list, gif_name, duration):
     imageio.mimsave(gif_name, frames, "GIF", duration=duration)
     return
 
+# def plot_
+
 
 if __name__ == "__main__":
     # small:[0.0073, 0.1, 0.0073] [0.0086, 0.06, 0.0086]
