@@ -85,7 +85,7 @@ def plot_2d_hexagon_grid(size, filepath):
     plot_edge_set(ax, edges_type_1, color="red")
     plot_edge_set(ax, edges_type_2, color="blue")
     plot_edge_set(ax, edges_type_3, color="green")
-    plt.savefig(filepath)
+    plt.savefig(filepath, bbox_inches='tight')
     plt.close()
 
 

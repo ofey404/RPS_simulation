@@ -18,6 +18,7 @@ for i in range(nt)[6000:11000:1000]:
 
     ax.plot(xs, ys, zs, zdir="y")
     ax.set_xlabel("n")
+    ax.set_xlim(0, 50)
     ax.set_ylabel("time")
     # ax.set_zlabel("count")
 

@@ -37,7 +37,7 @@ def plot_bandgap(r, filepath):
     plt.xticks([-pi, -pi/2, 0, pi/2, pi], ["$-\pi$", "$-\pi/2$", "$0$", "$\pi/2$", "$\pi$"])
 
     # plt.show()
-    plt.savefig(filepath)
+    plt.savefig(filepath, bbox_inches='tight')
     plt.close()
 
 
@@ -45,8 +45,8 @@ def plot_ellipse(r, filepath):
     r3 = r2 / r
 
     xy = (0, -r3)
-    width = r1 * r2 / sqrt(r1 ** 2 + r2 ** 2)
-    height = r2 / 2
+    width = 4 * r1 * r2 / sqrt(r1 ** 2 + r2 ** 2)
+    height = r2 * 2
 
     fig, ax = plt.subplots()
     e = Ellipse(xy=xy, width=width, height=height, angle=0, linewidth=2, fill=False)
@@ -58,7 +58,7 @@ def plot_ellipse(r, filepath):
     ax.set_xlabel("h1")
     ax.set_ylabel("h2")
     ax.xaxis.set_label_coords(0.9, 0.5)
-    ax.yaxis.set_label_coords(0.5, 0.9)
+    ax.yaxis.set_label_coords(0.5, 0.1)
 
     ax.spines["left"].set_position(("data", 0))
     ax.spines["bottom"].set_position(("data", 0))
@@ -70,7 +70,7 @@ def plot_ellipse(r, filepath):
     ax.yaxis.set_ticks_position("left")
 
     # plt.show()
-    plt.savefig(filepath)
+    plt.savefig(filepath, bbox_inches='tight')
     plt.close()
 
 

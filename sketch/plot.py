@@ -13,6 +13,15 @@ def get_xy(data, ts):
     y = data["result"][:, ts]
     return (x, y)
 
+def set_fig_ratio(ax, ratio):
+    # Thanks to https://jdhao.github.io/2017/06/03/change-aspect-ratio-in-mpl/
+    ratio = 0.3
+    xleft, xright = ax.get_xlim()
+    ybottom, ytop = ax.get_ylim()
+    # the abs method is used to make sure that all numbers are positive
+    # because x and y axis of an axes maybe inversed.
+    ax.set_aspect(abs((xright-xleft)/(ybottom-ytop))*ratio)
+
 
 class Circle(Ellipse):
     def __init__(self, xy, diameter, color=None, alpha=None):
@@ -37,6 +46,8 @@ class Visualizer:
     def plt_temporal_mass_average(self, filepath):
         result = self.windowed_result
 
+        fig, ax = plt.subplots()
+
         x = np.arange(self.data["shape"][0])
         avg = np.average(result, axis=1)
 
@@ -46,11 +57,13 @@ class Visualizer:
         log_avg = np.log(avg)
         k, b = np.polyfit(x, log_avg, 1)
 
-        plt.scatter(x, log_avg)
-        plt.plot(x, k * x + b, "k-")
-        plt.xlabel("S")
-        plt.ylabel("log_avg")
-        plt.savefig(filepath)
+        ax.scatter(x, log_avg)
+        ax.plot(x, k * x + b, "k-")
+        ax.set_xlabel("S")
+        ax.set_ylabel("log_avg")
+
+        set_fig_ratio(ax, 0.3)
+        plt.savefig(filepath, bbox_inches='tight')
         plt.close()
 
     def plt_temporal_mass_average_visualization(self, filepath):
@@ -81,22 +94,27 @@ class Visualizer:
 
         plt.xlabel("S")
 
-        plt.savefig(filepath)
+        plt.savefig(filepath, bbox_inches='tight')
         plt.close()
 
     def plt_temporal_mass_variance(self, filepath):
         result = self.windowed_result
+
+        fig, ax = plt.subplots()
 
         x = np.arange(self.data["shape"][0])
         var = np.var(result, axis=1)
 
         k, b = np.polyfit(x, var, 1)
 
-        plt.scatter(x, var)
-        plt.plot(x, k * x + b, "k-")
-        plt.xlabel("S")
-        plt.ylabel("$\sigma$")
-        plt.savefig(filepath)
+        ax.scatter(x, var)
+        ax.plot(x, k * x + b, "k-")
+        ax.set_xlabel("S")
+        ax.set_ylabel("$\sigma$")
+
+        set_fig_ratio(ax, 0.3)
+
+        plt.savefig(filepath, bbox_inches='tight')
         plt.close()
 
 
