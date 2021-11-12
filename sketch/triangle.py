@@ -69,7 +69,8 @@ if __name__ == '__main__':
     tspan, nt = [0, 1000], 10001
 
     coordinates = coordinate(7)
-    R = (1,2,1.5)
+    # R = (1,2,1.5)
+    R = (1,0.5,1)
     A = matrix_generator(7, R)
     
     result = RK4(RoPpSc, Y0, tspan, nt)

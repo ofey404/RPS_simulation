@@ -13,6 +13,7 @@ def get_xy(data, ts):
     y = data["result"][:, ts]
     return (x, y)
 
+
 def set_fig_ratio(ax, ratio):
     # Thanks to https://jdhao.github.io/2017/06/03/change-aspect-ratio-in-mpl/
     ratio = 0.3
@@ -20,7 +21,7 @@ def set_fig_ratio(ax, ratio):
     ybottom, ytop = ax.get_ylim()
     # the abs method is used to make sure that all numbers are positive
     # because x and y axis of an axes maybe inversed.
-    ax.set_aspect(abs((xright-xleft)/(ybottom-ytop))*ratio)
+    ax.set_aspect(abs((xright - xleft) / (ybottom - ytop)) * ratio)
 
 
 class Circle(Ellipse):
@@ -31,14 +32,17 @@ class Circle(Ellipse):
 
 
 class Visualizer:
-    def __init__(self, data, config) -> None:
+    def __init__(self, data, config, left_polarization=False) -> None:
         self.data = data
         self.config = config
 
         self.T = 2000
         self.result = self.data["result"]
-        self.windowed_result = self.result[:, -self.T:]
+        self.windowed_result = self.result[:, -self.T :]
+
+        # Exclude first X in plt_temporal_mass_average()
         self.exculde_first_S_in_average = 2
+        self.left_polarization = left_polarization
 
         self.color_scale = [np.random.rand(3) for _ in range(data["shape"][0])]
         self.border = sum(data["result"][:, 0]) / 5
@@ -51,8 +55,13 @@ class Visualizer:
         x = np.arange(self.data["shape"][0])
         avg = np.average(result, axis=1)
 
-        x = x[self.exculde_first_S_in_average:]
-        avg = avg[self.exculde_first_S_in_average:]
+        if self.left_polarization:
+            x = x[: -self.exculde_first_S_in_average]
+            avg = avg[: -self.exculde_first_S_in_average]
+        else:
+            x = x[self.exculde_first_S_in_average :]
+            avg = avg[self.exculde_first_S_in_average :]
+
 
         log_avg = np.log(avg)
         k, b = np.polyfit(x, log_avg, 1)
@@ -63,7 +72,7 @@ class Visualizer:
         ax.set_ylabel("log_avg")
 
         set_fig_ratio(ax, 0.3)
-        plt.savefig(filepath, bbox_inches='tight')
+        plt.savefig(filepath, bbox_inches="tight")
         plt.close()
 
     def plt_temporal_mass_average_visualization(self, filepath):
@@ -94,7 +103,7 @@ class Visualizer:
 
         plt.xlabel("S")
 
-        plt.savefig(filepath, bbox_inches='tight')
+        plt.savefig(filepath, bbox_inches="tight")
         plt.close()
 
     def plt_temporal_mass_variance(self, filepath):
@@ -114,26 +123,47 @@ class Visualizer:
 
         set_fig_ratio(ax, 0.3)
 
-        plt.savefig(filepath, bbox_inches='tight')
+        plt.savefig(filepath, bbox_inches="tight")
         plt.close()
+
+
+def plot(data, config, output_dir, prefix=""):
+    n, t = data["shape"]
+    left_polarization = False
+    if "expect_left_polarization" in config.keys():
+        left_polarization = config["expect_left_polarization"]
+    v = Visualizer(data, config, left_polarization)
+    v.plt_temporal_mass_average(
+        output_dir / "{}temporal_mass_average.png".format(prefix)
+    )
+    v.plt_temporal_mass_variance(
+        output_dir / "{}temporal_mass_variance.png".format(prefix)
+    )
+    v.plt_temporal_mass_average_visualization(
+        output_dir / "{}temporal_mass_average_visualization.png".format(prefix)
+    )
 
 
 def main(argv):
     config, data_dir = parse_argv(argv)
-    data_file_path = get_data_files(data_dir)[0]
-    step = config["plot_step"]
+    fp = get_data_files(data_dir)
+    data_file_path = ""
+    data_addtail_file_path = ""
+    for f in fp:
+        if f.name.startswith("RPS-addtail"):
+            data_addtail_file_path = f
+        else:
+            data_file_path = f
 
     np.random.seed(250)
 
-    with open(data_file_path, "rb") as data_file:
+    with open(data_file_path, "rb") as data_file, open(
+        data_addtail_file_path, "rb"
+    ) as data_addtail_file:
         data = pickle.load(data_file)
-        n, t = data["shape"]
-        v = Visualizer(data, config)
-        v.plt_temporal_mass_average(data_dir / "temporal_mass_average.png")
-        v.plt_temporal_mass_variance(data_dir / "temporal_mass_variance.png")
-        v.plt_temporal_mass_average_visualization(
-            data_dir / "temporal_mass_average_visualization.png"
-        )
+        data_addtail = pickle.load(data_addtail_file)
+        plot(data, config, output_dir=data_dir)
+        plot(data_addtail, config, output_dir=data_dir, prefix="addtail-")
 
 
 if __name__ == "__main__":
