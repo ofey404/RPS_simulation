@@ -12,8 +12,9 @@ ax = fig.add_subplot(projection='3d')
 tspan, nt = [0, 1500], 15001
 
 for i in range(nt)[6000:11000:1000]:
-    xs = np.arange(81)
-    ys = result[:, i]
+    cutoff = 50
+    xs = np.arange(cutoff)
+    ys = result[:cutoff, i]
     zs = i
 
     ax.plot(xs, ys, zs, zdir="y")
@@ -22,4 +23,4 @@ for i in range(nt)[6000:11000:1000]:
     ax.set_ylabel("time")
     # ax.set_zlabel("count")
 
-plt.show()
+plt.savefig("./wavepackages.png", bbox_inches="tight")

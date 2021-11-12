@@ -66,16 +66,26 @@ def colormesh(Y, n, pathname):
 
 if __name__ == '__main__':
     Y0 = np.array([0.1]+[0.01]*20+[0.1]+[0.01]*5+[0.1])
-    tspan, nt = [0, 1000], 10001
+    tspan, nt = [0, 1000], 10000
 
     coordinates = coordinate(7)
-    # R = (1,2,1.5)
-    R = (1,0.5,1)
+    R = (1,2,1)
+    # R = (1,0.5,1)
     A = matrix_generator(7, R)
     
     result = RK4(RoPpSc, Y0, tspan, nt)
     for i in range(nt)[::1000]:
         pathname = './RPS={}.png'.format(i)
         colormesh(result[:,i], 7, pathname)
-       
+    
+    T = 2000
+    pathname = "./RPS-average.png"
+    x = np.average(result[:, -T:], axis=1)
+    colormesh(x, 7, pathname)
+
+    np.set_printoptions(threshold=np.inf)
+    p = 0
+    for i in range(1, 8):
+        print(x[p: p+i])
+        p += i
     

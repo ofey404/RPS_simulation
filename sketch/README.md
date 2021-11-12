@@ -19,6 +19,8 @@ FILE_MANAGER=xdg-open
 .
 ├── data/       # 数据目录
 ├── template/   # 示例配置文件
+├── plot/       # 绘图用脚本
+├── manual_scripts/   # 手动运行的脚本
 ├── ... 
 ├── new.sh      # 入口脚本
 ├── main.py     # 计算脚本
